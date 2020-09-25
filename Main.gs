@@ -6,7 +6,7 @@
 // python and use selenium to search and scrape google jobs automatically then scrape and parse the job descriptions 
 // for even more filtration
 
-const userEmail = "tzmetz777@gmail.com"
+
 
 function mainFun() {
   
