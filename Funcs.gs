@@ -50,8 +50,14 @@ function parseMessage(message) {
   }
   
   // Now get blocks of text containing each position from email body text
-  var body = message.getPlainBody(); // Gets emial text from HTML
-  var positionBlocks = body.split(/^Time\sicon/gm); // split body text into blocks based on indicator
+  var body = message.getPlainBody(); // Gets emial text from HTML 
+  Logger.log(body)
+  
+  // split body text into blocks based on google job's time stamp included for all positions
+  // Regex uses lookbehind to split at the word "Work" This preserves the date data which will be stored
+  // Note: old Regex is /^Time\sicon/gm
+  var positionBlocks = body.split(/(?<=Time\sicon\s...\s..\s)Work/gm); 
+  
   var numPositions = positionBlocks.length - 1; // Number of position blocks. -1 to remove the footer
   
   // Split up each position block into seperate lines of text
