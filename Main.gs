@@ -1,5 +1,6 @@
-// TODO: make the split at "via" instead of time icon that way I can get date posted info as well
-// TODO: add a check to make sure that each appended row to data sheet is unique
+// TODO: add a check to make sure that each appended row to data sheet is unique. make a func that takes spreadsheet obj 
+// & title, employer & loc and scans for matches, returns a boolean
+
 // TODO: add LinkedIn & Indeed search results as well 
 
 // FURTHER IMPROVEMENT: use "at" in Linux to run local code at specified time, write the program in 
