@@ -131,7 +131,18 @@ function Position(title, loc, employer, dateAccessed, datePosted, url, badFlag) 
   this.datePosted = datePosted;
   this.url = url;
   this.badFlag = badFlag; 
-}
-    
-    
+} 
 
+function isPosUnique(title, employer, loc, titlesData, employerData, locData) {  
+    
+  // Compare stored data to new data
+  for (var i = 0; i < titlesData.length; i++) {
+    if ( title == titlesData[i][0] && employer == employerData[i][0] && loc == locData[i][0] ) {
+      return 0; // found an exact match, so return false
+    }
+  }
+  
+  // Got through the whole for loop without finding an exact match, return true
+  return 1;
+  
+}
