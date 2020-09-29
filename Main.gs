@@ -42,11 +42,11 @@ function mainFun() {
       
       // Check the flag on the position, if it passed the filter, pass it on to the data sheet. If it didnt pass filter send it to the rejects
       if (positionsData[k][z].badFlag == false) { 
-        goodSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].date, positionsData[k][z].url])
+        goodSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].dateAccessed, positionsData[k][z].datePosted, positionsData[k][z].url])
         countGood++;
       }
       else if (positionsData[k][z].badFlag == true) {
-        badSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].date, positionsData[k][z].url])
+        badSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].dateAccessed, positionsData[k][z].datePosted, positionsData[k][z].url])
         countBad++;
       }
     
