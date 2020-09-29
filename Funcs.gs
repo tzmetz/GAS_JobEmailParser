@@ -1,5 +1,12 @@
+// ---------------- GLOBAL VARIABLES ----------------------
 const today = Utilities.formatDate(new Date(), "PST", "yyyy-MM-dd");
 
+// ----------------- SUPPORTING FUNCTIONS --------------------
+
+/*
+  * Reads all threads from inbox with given label. Gets messages from all threads
+  * @returns {array}  threadMessages: array of class messages
+  */ 
 function getTodaysMessages() {
   
   // Get today's email messages
@@ -31,8 +38,14 @@ function getTodaysMessages() {
   
   return threadMessages;
   
-} 
+} // END OF getTodaysMessages()
 
+
+/*
+  * Checks sender of message to make sure it is correct
+  * @param {message}  message: checks sender of this message
+  * @returns {boolean} true if from correct sender, false if not
+  */ 
 function isGoogleMessage(message) {
   if (message.getFrom() == 'Job Alerts from Google <notify-noreply@google.com>') {
     return 1;
@@ -40,8 +53,14 @@ function isGoogleMessage(message) {
   else {
     return 0;
   }
-}
+} 
 
+
+/*
+  * Parses message to exrtact all job positions with all relevant information from each position
+  * @param {Message}  message: message containing job positions to be parsed
+  * @returns {Array} outputArray: returns an array containing Position objects which contain all relevant information from each position found in the message
+  */ 
 function parseMessage(message) {
   
   // If this message is not from Google jobs then do not waste time parsing it
@@ -123,8 +142,11 @@ function parseMessage(message) {
   
   return outputArray;
   
-}
+} // END OF parseMessage()
 
+/*
+  * Position Class
+  */ 
 function Position(title, loc, employer, dateAccessed, datePosted, url, badFlag) {
   this.title = title;
   this.loc = loc;
@@ -135,6 +157,16 @@ function Position(title, loc, employer, dateAccessed, datePosted, url, badFlag) 
   this.badFlag = badFlag; 
 } 
 
+/*
+  * Checks each supplied data with against base data
+  * @param {array}  title: array of len 1 containing position title as a string
+  * @param {array}  employer: array of len 1 containing position employer as a string
+  * @param {array}  loc: array of len 1 containing position location as a string
+  * @param {array}  titlesData: array containing base titles for comparison
+  * @param {array}  employerData: array containing base employers for comparison
+  * @param {array}  locData: array containing base locations for comparison
+  * @returns {boolean} false if found a match, true if no matches found
+  */ 
 function isPosUnique(title, employer, loc, titlesData, employerData, locData) {  
     
   // Compare stored data to new data

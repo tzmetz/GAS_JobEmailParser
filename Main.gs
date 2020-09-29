@@ -1,16 +1,24 @@
-// TODO: include a list of negative employers and check against that list too
-
 // TODO: add LinkedIn & Indeed search results as well 
+
+// Known issues
+// multiline titles and locations cause misses in extraction of other data. Severity: LOW
+
+// Possible Issues
+// hiding row may make it not appear when collecting base data for comparing whether or not new data is unique
 
 // FURTHER IMPROVEMENT: use "at" in Linux to run local code at specified time, write the program in 
 // python and use selenium to search and scrape google jobs automatically then scrape and parse the job descriptions 
 // for even more filtration
 
-// Known issues
-// multiline titles and locations cause misses in extraction of other data. Severity: LOW
 
+// ---------------------- GLOBAL VARIABLES --------------------------
 const userEmail = "tzmetz777@gmail.com"
 
+/*
+  * main function executes program
+  * calls supporting funcs to read today's emails and parse them
+  * writes job positions to a spreadsheet and emails user a summary report
+  */ 
 function mainFun() {
   
   // First Get Today's Messages 
