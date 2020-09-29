@@ -1,10 +1,13 @@
-// TODO: make the split at "via" instead of time icon that way I can get date posted info as well
-// TODO: add a check to make sure that each appended row to data sheet is unique
+// TODO: include a list of negative employers and check against that list too
+
 // TODO: add LinkedIn & Indeed search results as well 
 
 // FURTHER IMPROVEMENT: use "at" in Linux to run local code at specified time, write the program in 
 // python and use selenium to search and scrape google jobs automatically then scrape and parse the job descriptions 
 // for even more filtration
+
+// Known issues
+// multiline titles and locations cause misses in extraction of other data. Severity: LOW
 
 const userEmail = "tzmetz777@gmail.com"
 
@@ -33,20 +36,32 @@ function mainFun() {
   .openByUrl(spreadsheetURL)
   .getSheetByName("Rejects");
   
+  // Initialize counts
   var countGood = 0;
   var countBad = 0;
+  
+  var sheetHeaderOffset = 4; //num rows making up sheet header
+  
+  // Get data from both good and bad sheets, for comparing new data to make sure we're not writing duplicates to the sheet 
+  var titlesData_GOODSHT = goodSheet.getRange(sheetHeaderOffset+1, 1, goodSheet.getLastRow(), 1).getValues();
+  var employerData_GOODSHT = goodSheet.getRange(sheetHeaderOffset+1, 2, goodSheet.getLastRow(), 2).getValues();
+  var locData_GOODSHT = goodSheet.getRange(sheetHeaderOffset+1, 3, goodSheet.getLastRow(), 3).getValues();
+  
+  var titlesData_BADSHT = badSheet.getRange(sheetHeaderOffset+1, 1, badSheet.getLastRow(), 1).getValues();
+  var employerData_BADSHT = badSheet.getRange(sheetHeaderOffset+1, 2, badSheet.getLastRow(), 2).getValues();
+  var locData_BADSHT = badSheet.getRange(sheetHeaderOffset+1, 3, badSheet.getLastRow(), 3).getValues();
   
   // Loop through positions data (array containing arrays of Position Objects from each email thread) and write the contents of each Position object to the spreadsheet
   for ( var k = 0; k < positionsData.length; k++) {
     for ( var z = 0; z < positionsData[k].length; z++) {
       
       // Check the flag on the position, if it passed the filter, pass it on to the data sheet. If it didnt pass filter send it to the rejects
-      if (positionsData[k][z].badFlag == false) { 
-        goodSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].date, positionsData[k][z].url])
+      if ( positionsData[k][z].badFlag == false && isPosUnique(positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, titlesData_GOODSHT, employerData_GOODSHT, locData_GOODSHT) ) { 
+        goodSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].dateAccessed, positionsData[k][z].datePosted, positionsData[k][z].url])
         countGood++;
       }
-      else if (positionsData[k][z].badFlag == true) {
-        badSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].date, positionsData[k][z].url])
+      else if ( positionsData[k][z].badFlag == true && isPosUnique(positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, titlesData_BADSHT, employerData_BADSHT, locData_BADSHT) ) {
+        badSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].dateAccessed, positionsData[k][z].datePosted, positionsData[k][z].url])
         countBad++;
       }
     

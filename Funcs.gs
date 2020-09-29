@@ -50,8 +50,14 @@ function parseMessage(message) {
   }
   
   // Now get blocks of text containing each position from email body text
-  var body = message.getPlainBody(); // Gets emial text from HTML
-  var positionBlocks = body.split(/^Time\sicon/gm); // split body text into blocks based on indicator
+  var body = message.getPlainBody(); // Gets emial text from HTML 
+  Logger.log(body)
+  
+  // split body text into blocks based on google job's time stamp included for all positions
+  // Regex uses lookbehind to split at the word "Work" This preserves the date data which will be stored
+  // Note: old Regex is /^Time\sicon/gm
+  var positionBlocks = body.split(/(?<=Time\sicon\s...\s..\s)Work/gm); 
+  
   var numPositions = positionBlocks.length - 1; // Number of position blocks. -1 to remove the footer
   
   // Split up each position block into seperate lines of text
@@ -63,9 +69,10 @@ function parseMessage(message) {
   var numHeaderLines = 14; // To find the number of header lines, break here & look at positions[0] in the debugger
   var titlesIndex = 9;
   var employerIndex = 10;
-  var locIndex = 12;
+  var locIndex = 12; 
+  var datePostedIndex = 16;
   var outputArray = []; // initializing array of objects for output
-  const negKeywords = ["senior", "lead", "sr.", "manager", "intern", "internship", "HVAC"];
+  const negKeywords = ["senior", "lead", "sr.", "manager", "mgr", "intern", "internship", "hvac"];
   
   // Loop through each position block and extract the desired information
   for (var j = 0; j < numPositions; j++) {
@@ -74,7 +81,8 @@ function parseMessage(message) {
       outputArray[j].title = positionBlocks[j][numHeaderLines]; 
       outputArray[j].employer = positionBlocks[j][numHeaderLines+1];
       outputArray[j].loc = positionBlocks[j][numHeaderLines+3];
-      outputArray[j].date = today;
+      outputArray[j].datePosted = positionBlocks[j][numHeaderLines+7];
+      outputArray[j].dateAccessed = today;
       outputArray[j].url = "https://www.google.com/search?q=" + outputArray[j].title.replace(/\s+/g, "+") + "+" + outputArray[j].employer.replace(/\s/g, "+") +  // TODO: make sure position titles dont start with special characters since this will mess up the url
         "+" + outputArray[j].loc.replace(/\s/g, "+") + "&ibp=htl;jobs"; 
       
@@ -95,8 +103,9 @@ function parseMessage(message) {
       outputArray[j] = new Position();
       outputArray[j].title = positionBlocks[j][titlesIndex]; 
       outputArray[j].loc = positionBlocks[j][locIndex];
-      outputArray[j].employer = positionBlocks[j][employerIndex];
-      outputArray[j].date = today;
+      outputArray[j].employer = positionBlocks[j][employerIndex]; 
+      outputArray[j].datePosted = positionBlocks[j][datePostedIndex];
+      outputArray[j].dateAccessed = today;
       outputArray[j].url = "https://www.google.com/search?q=" + outputArray[j].title.replace(/\s+/g, "+") + "+" + outputArray[j].employer.replace(/\s/g, "+") + 
         "+" + outputArray[j].loc.replace(/\s/g, "+") + "&ibp=htl;jobs";
       
@@ -114,15 +123,26 @@ function parseMessage(message) {
   
 }
 
-function Position(title, loc, employer, date, datePosted, url, badFlag) {
+function Position(title, loc, employer, dateAccessed, datePosted, url, badFlag) {
   this.title = title;
   this.loc = loc;
   this.employer = employer;
-  this.date = date;
+  this.dateAccessed = dateAccessed;
   this.datePosted = datePosted;
   this.url = url;
-  this.badFlag = badFlag;
-}
-    
-    
+  this.badFlag = badFlag; 
+} 
 
+function isPosUnique(title, employer, loc, titlesData, employerData, locData) {  
+    
+  // Compare stored data to new data
+  for (var i = 0; i < titlesData.length; i++) {
+    if ( title == titlesData[i][0] && employer == employerData[i][0] && loc == locData[i][0] ) {
+      return 0; // found an exact match, so return false
+    }
+  }
+  
+  // Got through the whole for loop without finding an exact match, return true
+  return 1;
+  
+}
