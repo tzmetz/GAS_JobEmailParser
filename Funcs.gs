@@ -72,7 +72,7 @@ function parseMessage(message) {
   var locIndex = 12; 
   var datePostedIndex = 16;
   var outputArray = []; // initializing array of objects for output
-  const negKeywords = ["senior", "lead", "sr.", "manager", "intern", "internship", "HVAC"];
+  const negKeywords = ["senior", "lead", "sr.", "manager", "mgr", "intern", "internship", "hvac"];
   
   // Loop through each position block and extract the desired information
   for (var j = 0; j < numPositions; j++) {
