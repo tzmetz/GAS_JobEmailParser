@@ -72,7 +72,8 @@ function parseMessage(message) {
   var locIndex = 12; 
   var datePostedIndex = 16;
   var outputArray = []; // initializing array of objects for output
-  const negKeywords = ["senior", "lead", "sr.", "manager", "mgr", "intern", "internship", "hvac"];
+  const negTitles = ["senior", "lead", "sr.", "manager", "mgr", "intern", "internship", "hvac"]; // importatnt that each keyword is all lower case
+  const negEmployers = ["amazon", "raytheon", "facebook", "lockheed martin"];
   
   // Loop through each position block and extract the desired information
   for (var j = 0; j < numPositions; j++) {
@@ -91,7 +92,8 @@ function parseMessage(message) {
       // At each element in the negKeywords array, (for keyword in negKeywods) run .includes method on the position title (made lowercase for simplicity)
       // If method returns 1 then enter the if statement 
       // Ref: https://stackoverflow.com/questions/46914159/look-for-keywords-in-a-string-in-js
-      if( negKeywords.some(keyword => outputArray[j].title.toLowerCase().includes(keyword) )) { 
+      // Or condition added in if statment to check for negative employers as well
+      if( negTitles.some(keyword => outputArray[j].title.toLowerCase().includes(keyword)) || negEmployers.some(keyword => outputArray[j].employer.toLowerCase().includes(keyword)) ) { 
         console.log("Found") 
         outputArray[j].badFlag = true; 
       }
@@ -109,7 +111,7 @@ function parseMessage(message) {
       outputArray[j].url = "https://www.google.com/search?q=" + outputArray[j].title.replace(/\s+/g, "+") + "+" + outputArray[j].employer.replace(/\s/g, "+") + 
         "+" + outputArray[j].loc.replace(/\s/g, "+") + "&ibp=htl;jobs";
       
-      if( negKeywords.some(keyword => outputArray[j].title.toLowerCase().includes(keyword) )) { 
+      if( negTitles.some(keyword => outputArray[j].title.toLowerCase().includes(keyword)) || negEmployers.some(keyword => outputArray[j].employer.toLowerCase().includes(keyword)) ) { 
         console.log("Found") 
         outputArray[j].badFlag = true; 
       }
