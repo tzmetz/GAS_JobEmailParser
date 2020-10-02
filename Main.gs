@@ -25,7 +25,9 @@ const userEmail = "tzmetz777@gmail.com"
   */ 
 function mainFun() {
   
-//  Logger.log(
+  // Set up to record function execution time
+  var todayNow = new Date();
+  var t0 = todayNow.getTime();
   
   // First Get Today's Messages 
   var messages = getTodaysMessages(); // Returns Array containing arrays of class {messages} 
@@ -84,12 +86,18 @@ function mainFun() {
     }
   }
 
+  // Measure execution time in ms
+  var todayThen = new Date();
+  var t1 = todayThen.getTime();
+  var executionTime = (t1 - t0)/1000; // [s]
+  
   // Now send an email to the user's inbox with a report of what was found today 
   mailBody = "TODAY'S REPORT \r\r" +
     "Found " + countGood + " Matching Positions \r\r" +
     "Found " + countBad + " Rejected Positions \r\r" +
-    "See Results Here: " + spreadsheetURL;
-  GmailApp.sendEmail(userEmail, "Daily Job Search Report From BotMan", mailBody);
+    "See Results Here: " + spreadsheetURL + "\r\r" +
+    "Execution Time: " + executionTime + "s"; 
+  GmailApp.sendEmail(userEmail, "Daily Job Search Report From BotMan", mailBody); 
   
 } // END OF MAIN FUNCTION
 
