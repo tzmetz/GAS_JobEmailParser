@@ -5,14 +5,13 @@ const today = Utilities.formatDate(new Date(), "PST", "yyyy-MM-dd");
 
 /*
   * Reads all threads from inbox with given label. Gets messages from all threads
-  * @returns {array}  threadMessages: array of class messages
+  * @returns {array}  threadMessages: array of arrays. Each element contains an array of class messages from an email thread
   */ 
-function getTodaysMessages() {
+function getTodaysMessages(labelName) {
   
   // Get today's email messages
   
   // Get all email threads corresponding to job search results 
-  var labelName = "JobSearchResults";
   var labelThreads = GmailApp.getUserLabelByName(labelName);
   var allThreads = labelThreads.getThreads();
   
@@ -63,7 +62,7 @@ function isGoogleMessage(message) {
   * @param {Message}  message: message containing job positions to be parsed
   * @returns {Array} outputArray: returns an array containing Position objects which contain all relevant information from each position found in the message
   */ 
-function parseMessage(message) {
+function parseMessage_Google(message) {
   
   // If this message is not from Google jobs then do not waste time parsing it
   if (!isGoogleMessage(message)) {
@@ -108,6 +107,7 @@ function parseMessage(message) {
       outputArray[j].dateAccessed = today;
       outputArray[j].url = "https://www.google.com/search?q=" + outputArray[j].title.replace(/\s+/g, "+") + "+" + outputArray[j].employer.replace(/\s/g, "+") +  // TODO: make sure position titles dont start with special characters since this will mess up the url
         "+" + outputArray[j].loc.replace(/\s/g, "+") + "&ibp=htl;jobs"; 
+      outputArray[j].source = "Google";
       
       // Apply a flag to this position if the title contains any negative keywords
       // To avoid long for loop we are going to use the some method to iterate through the negKeywords array for us 
@@ -131,7 +131,8 @@ function parseMessage(message) {
       outputArray[j].datePosted = positionBlocks[j][datePostedIndex];
       outputArray[j].dateAccessed = today;
       outputArray[j].url = "https://www.google.com/search?q=" + outputArray[j].title.replace(/\s+/g, "+") + "+" + outputArray[j].employer.replace(/\s/g, "+") + 
-        "+" + outputArray[j].loc.replace(/\s/g, "+") + "&ibp=htl;jobs";
+        "+" + outputArray[j].loc.replace(/\s/g, "+") + "&ibp=htl;jobs"; 
+      outputArray[j].source = "Google";
       
       if( negTitles.some(keyword => outputArray[j].title.toLowerCase().includes(keyword)) || negEmployers.some(keyword => outputArray[j].employer.toLowerCase().includes(keyword)) ) { 
         console.log("Found") 
@@ -150,14 +151,15 @@ function parseMessage(message) {
 /*
   * Position Class
   */ 
-function Position(title, loc, employer, dateAccessed, datePosted, url, badFlag) {
+function Position(title, loc, employer, dateAccessed, datePosted, url, badFlag, source) {
   this.title = title;
   this.loc = loc;
   this.employer = employer;
   this.dateAccessed = dateAccessed;
   this.datePosted = datePosted;
   this.url = url;
-  this.badFlag = badFlag; 
+  this.badFlag = badFlag;  
+  this.source = source;
 } 
 
 /*
@@ -183,4 +185,35 @@ function isPosUnique(title, employer, loc, titlesData, employerData, locData) {
   // Got through the whole for loop without finding an exact match, return true
   return 1;
   
+} 
+
+
+/*
+  * Checks each supplied data with against base data
+  * @param {array}  messages: array of arrays containing messages
+  * @returns {array} positionsData: array of arrays containing Positions objects
+  */ 
+function parseMessagesByLabel(messages, label) {
+  // Loop through all of today's messages from each email thread today and parse its contents 
+  // Store results (array of Position objects) in an array called positionsData
+  var positionsData = []; 
+  var length_messages = messages.length;
+  for (var i = 0; i < length_messages; i++) {
+    for (var j = 0; j < messages[i].length; j++) {              
+      
+      // Based on label, run correct email parser
+      if (label == "JobSearchResults") {  
+        positionsData.push(parseMessage_Google(messages[i][j]));    // Add breakpoint here to get in and diagnose parsing function. See Funcs.gs for comments showing best places to put breakpoints for diagnosis
+      }
+      else if (label == "IndeedSearchResults") {
+        positionsData.push(parseMessage_Indeed(messages[i][j]));    // Add breakpoint here to get in and diagnose parsing function. See Funcs.gs for comments showing best places to put breakpoints for diagnosis
+      }
+      else if (label == "LinkedInJobSearchResults") {
+        positionsData.push(parseMessage_LinkedIn(messages[i][j]));    // Add breakpoint here to get in and diagnose parsing function. See Funcs.gs for comments showing best places to put breakpoints for diagnosis
+      }
+    
+    }
+  }
+  
+  return positionsData;
 }

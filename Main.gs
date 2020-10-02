@@ -29,18 +29,20 @@ function mainFun() {
   var todayNow = new Date();
   var t0 = todayNow.getTime();
   
-  // First Get Today's Messages 
-  var messages = getTodaysMessages(); // Returns Array containing arrays of class {messages} 
+  // Gmail labels containing job search results
+  var labelNames = ["JobSearchResults", "IndeedSearchResults", "LinkedInJobSearchResults"];
   
-  // Loop through all of today's messages from each email thread today and parse its contents 
-  // Store results (array of Position objects) in an array called positionsData
-  var positionsData = []; 
-  var length_messages = messages.length;
-  for (var i = 0; i < length_messages; i++) {
-    for (var j = 0; j < messages[i].length; j++) {               // Add breakpoint here to get in and diagnose parsing function. See Funcs.gs for comments showing best places to put breakpoints for diagnosis
-      positionsData.push(parseMessage(messages[i][j]));
-    }
-  }
+  // First Get Today's Messages From Each Label Source 
+  var messages_Google = getTodaysMessages(labelNames[0]); // Returns Array containing arrays of class {messages}
+  var messages_Indeed = getTodaysMessages(labelNames[1]); // Returns Array containing arrays of class {messages}
+  var messages_LinkedIn = getTodaysMessages(labelNames[2]); // Returns Array containing arrays of class {messages}
+  
+  var positions_Google = parseMessagesByLabel(messages_Google, labelNames[0]); // Returns Array containing arrays of class {Positions}
+  var positions_Indeed = parseMessagesByLabel(messages_Indeed, labelNames[1]); // Returns Array containing arrays of class {Positions}
+  var positions_LinkedIn = parseMessagesByLabel(messages_LinkedIn, labelNames[2]); // Returns Array containing arrays of class {Positions}
+  
+  // Aggregate all positions into one array
+  var positionsData = [positions_Google, positions_Indeed, positions_LinkedIn];
   
   // Now Write Parsed Job Info To a Spreadsheet 
   var spreadsheetURL = "https://docs.google.com/spreadsheets/d/1UWBO4w85lKeSLSztepJvxGR-KYU_pNpnHLRpJFZQptk/edit#gid=0"
@@ -75,11 +77,11 @@ function mainFun() {
       
       // Check the flag on the position, if it passed the filter, pass it on to the data sheet. If it didnt pass filter send it to the rejects
       if ( positionsData[k][z].badFlag == false && isPosUnique(positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, titlesData_GOODSHT, employerData_GOODSHT, locData_GOODSHT) ) { 
-        goodSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].dateAccessed, positionsData[k][z].datePosted, positionsData[k][z].url])
+        goodSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].dateAccessed, positionsData[k][z].datePosted, positionsData[k][z].source, positionsData[k][z].url])
         countGood++;
       }
       else if ( positionsData[k][z].badFlag == true && isPosUnique(positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, titlesData_BADSHT, employerData_BADSHT, locData_BADSHT) ) {
-        badSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].dateAccessed, positionsData[k][z].datePosted, positionsData[k][z].url])
+        badSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].dateAccessed, positionsData[k][z].datePosted, positionsData[k][z].source, positionsData[k][z].url])
         countBad++;
       }
     
@@ -100,6 +102,3 @@ function mainFun() {
   GmailApp.sendEmail(userEmail, "Daily Job Search Report From BotMan", mailBody); 
   
 } // END OF MAIN FUNCTION
-
-
-
