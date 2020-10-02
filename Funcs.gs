@@ -19,7 +19,8 @@ function getTodaysMessages() {
   // Now get today's email threads by lopping through all inbox email threads and comparing their date to today's 
   // Once we get to the previous day, break the loop to save time
   var todaysThreads = [];
-  for (var i = 0; i < allThreads.length; i++) {
+  var length_allThreads = allThreads.length;
+  for (var i = 0; i < length_allThreads; i++) {
     var threadDate = Utilities.formatDate(allThreads[i].getLastMessageDate(), "PST", "yyyy-MM-dd");
     if (threadDate == today) {
       todaysThreads[i] = allThreads[i];
@@ -32,7 +33,8 @@ function getTodaysMessages() {
   
   // Now loop through all of todays threads and get all messages
   var threadMessages = [];
-  for (var i = 0; i < todaysThreads.length; i++) {
+  var length_todaysThreads = todaysThreads.length;
+  for (var i = 0; i < length_todaysThreads; i++) {
     threadMessages[i] = todaysThreads[i].getMessages();
   } 
   
@@ -80,7 +82,8 @@ function parseMessage(message) {
   var numPositions = positionBlocks.length - 1; // Number of position blocks. -1 to remove the footer
   
   // Split up each position block into seperate lines of text
-  for (var k = 0; k < positionBlocks.length; k++) {
+  var length_positionBlocks = positionBlocks.length;
+  for (var k = 0; k < length_positionBlocks; k++) {
     positionBlocks[k] = positionBlocks[k].split(/\r?\n/); // replacing each string in positions with an array of strings containing each line in the block
   }
   
@@ -170,7 +173,8 @@ function Position(title, loc, employer, dateAccessed, datePosted, url, badFlag) 
 function isPosUnique(title, employer, loc, titlesData, employerData, locData) {  
     
   // Compare stored data to new data
-  for (var i = 0; i < titlesData.length; i++) {
+  var length_titlesData = titlesData.length;
+  for (var i = 0; i < length_titlesData; i++) {
     if ( title == titlesData[i][0] && employer == employerData[i][0] && loc == locData[i][0] ) {
       return 0; // found an exact match, so return false
     }

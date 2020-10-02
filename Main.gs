@@ -1,3 +1,7 @@
+// ******************************************************************
+// ---------------------- JOB EMAIL PARSER --------------------------
+// ******************************************************************
+
 // TODO: add LinkedIn & Indeed search results as well 
 
 // Known issues
@@ -21,13 +25,16 @@ const userEmail = "tzmetz777@gmail.com"
   */ 
 function mainFun() {
   
+//  Logger.log(
+  
   // First Get Today's Messages 
   var messages = getTodaysMessages(); // Returns Array containing arrays of class {messages} 
   
   // Loop through all of today's messages from each email thread today and parse its contents 
   // Store results (array of Position objects) in an array called positionsData
   var positionsData = []; 
-  for (var i = 0; i < messages.length; i++) {
+  var length_messages = messages.length;
+  for (var i = 0; i < length_messages; i++) {
     for (var j = 0; j < messages[i].length; j++) {               // Add breakpoint here to get in and diagnose parsing function. See Funcs.gs for comments showing best places to put breakpoints for diagnosis
       positionsData.push(parseMessage(messages[i][j]));
     }
@@ -60,7 +67,8 @@ function mainFun() {
   var locData_BADSHT = badSheet.getRange(sheetHeaderOffset+1, 3, badSheet.getLastRow(), 3).getValues();
   
   // Loop through positions data (array containing arrays of Position Objects from each email thread) and write the contents of each Position object to the spreadsheet
-  for ( var k = 0; k < positionsData.length; k++) {
+  var length_positionsData = positionsData.length;
+  for ( var k = 0; k < length_positionsData; k++) {
     for ( var z = 0; z < positionsData[k].length; z++) {
       
       // Check the flag on the position, if it passed the filter, pass it on to the data sheet. If it didnt pass filter send it to the rejects
