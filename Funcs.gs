@@ -1,6 +1,6 @@
 // ---------------- GLOBAL VARIABLES ----------------------
-const today = Utilities.formatDate(new Date(), "PST", "yyyy-MM-dd");
-
+//const today = Utilities.formatDate(new Date(), "PST", "yyyy-MM-dd");
+//var today = "2020-10-01"
 // ----------------- SUPPORTING FUNCTIONS --------------------
 
 /*
@@ -62,7 +62,7 @@ function isGoogleMessage(message) {
   * @returns {boolean} true if from correct sender, false if not
   */ 
 function isIndeedMessage(message) {
-  if (message.getFrom() == 'Job Alerts from Google <notify-noreply@google.com>') {
+  if (message.getFrom() == 'Indeed <alert@indeed.com>') {
     return 1;
   }
   else {
@@ -76,7 +76,7 @@ function isIndeedMessage(message) {
   * @returns {boolean} true if from correct sender, false if not
   */ 
 function isLinkedInMessage(message) {
-  if (message.getFrom() == 'Job Alerts from Google <notify-noreply@google.com>') {
+  if (message.getFrom() == 'LinkedIn Job Alerts <jobalerts-noreply@linkedin.com>') {
     return 1;
   }
   else {

@@ -5,7 +5,8 @@
 // TODO: add LinkedIn & Indeed search results as well 
 
 // Known issues
-// multiline titles and locations cause misses in extraction of other data. Severity: LOW
+// multiline titles and locations cause misses in extraction of other data for both Indeed and Google. Severity: LOW 
+// east apply indicator on linkedIn emails is random and causes misses in data extraction. Severity: LOW 
 
 // Possible Issues
 // hiding row may make it not appear when collecting base data for comparing whether or not new data is unique
@@ -17,6 +18,8 @@
 
 // ---------------------- GLOBAL VARIABLES --------------------------
 const userEmail = "tzmetz777@gmail.com"
+const today = Utilities.formatDate(new Date(), "PST", "yyyy-MM-dd");
+//var today = "2020-10-01"
 
 /*
   * main function executes program
@@ -33,11 +36,11 @@ function mainFun() {
   var labelNames = ["JobSearchResults", "IndeedSearchResults", "LinkedInJobSearchResults"];
   
   // First Get Today's Messages From Each Label Source 
-  var messages_Google = getTodaysMessages(labelNames[0]); // Returns Array containing arrays of class {messages}
+  var messages_Google = getTodaysMessages(labelNames[0]); // Returns Array containing arrays of class {messages}. Array len is the # of threads today. Each element is an array containing the messages in the thread
   var messages_Indeed = getTodaysMessages(labelNames[1]); // Returns Array containing arrays of class {messages}
   var messages_LinkedIn = getTodaysMessages(labelNames[2]); // Returns Array containing arrays of class {messages}
   
-  var positions_Google = parseMessagesByLabel(messages_Google, labelNames[0]); // Returns Array containing arrays of class {Positions}
+  var positions_Google = parseMessagesByLabel(messages_Google, labelNames[0]); // Returns Array containing arrays of class {Positions}. Array len is the # of messages today. Each element is an array containing the positions in each message
   var positions_Indeed = parseMessagesByLabel(messages_Indeed, labelNames[1]); // Returns Array containing arrays of class {Positions}
   var positions_LinkedIn = parseMessagesByLabel(messages_LinkedIn, labelNames[2]); // Returns Array containing arrays of class {Positions}
   
