@@ -154,3 +154,38 @@ function parseMessagesByLabel(messages, label) {
   
   return positionsData;
 }
+
+/*
+  * Checks each supplied data with against base data
+  * @param {array}  positionsData: array of arrays containing positions from each message
+  * @param {sheet}  goodSheet/badSheet: sheets for good and bad positions respectively
+  * @param {number}  countGood/countBad: array of len 1 containing position location as a string
+  * @param {array}  titlesData_GOODSHT/BADSHT: array containing titles from good/bad sheet
+  * @param {array}  employerData_GOOSHT/BADSHT: array containing employers from good/bad sheet
+  * @param {array}  locData_GOODSHT/BADSHT: array containing locations from good/bad sheet
+  * @returns {array} counts: array containing counts of unique good/bad positions and number of repeated positions
+  */ 
+function write2Sheet(positionsData, goodSheet, badSheet, countGood, countBad, countRpt, titlesData_GOODSHT, employerData_GOODSHT, locData_GOODSHT, titlesData_BADSHT, employerData_BADSHT, locData_BADSHT) {
+// Loop through positions data (array containing arrays of Position Objects from each email thread) and write the contents of each Position object to the spreadsheet
+  var length_positionsData = positionsData.length;
+  for ( var k = 0; k < length_positionsData; k++) {
+    for ( var z = 0; z < positionsData[k].length; z++) {
+      
+      // Check the flag on the position, if it passed the filter, pass it on to the data sheet. If it didnt pass filter send it to the rejects. Additionally, run isPosUnique to make sure we're only writing unique positions
+      // TODO: would be faster to check isPosUnique first then look at the flag
+      if ( positionsData[k][z].badFlag == false && isPosUnique(positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, titlesData_GOODSHT, employerData_GOODSHT, locData_GOODSHT) ) { 
+        goodSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].dateAccessed, positionsData[k][z].datePosted, positionsData[k][z].source, positionsData[k][z].url])
+        countGood++;
+      }
+      else if ( positionsData[k][z].badFlag == true && isPosUnique(positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, titlesData_BADSHT, employerData_BADSHT, locData_BADSHT) ) {
+        badSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].dateAccessed, positionsData[k][z].datePosted, positionsData[k][z].source, positionsData[k][z].url])
+        countBad++;
+      }
+      else {
+        countRpt++;
+      }
+    }
+  }
+  var counts = [countGood, countBad, countRpt]; 
+  return counts; 
+} // END OF write2Sheet()

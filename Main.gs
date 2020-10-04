@@ -45,7 +45,7 @@ function mainFun() {
   var positions_LinkedIn = parseMessagesByLabel(messages_LinkedIn, labelNames[2]); // Returns Array containing arrays of class {Positions}
   
   // Aggregate all positions into one array
-  var positionsData = [positions_Google, positions_Indeed, positions_LinkedIn];
+//  var positionsData = [positions_Google, positions_Indeed, positions_LinkedIn];
   
   // Now Write Parsed Job Info To a Spreadsheet 
   var spreadsheetURL = "https://docs.google.com/spreadsheets/d/1UWBO4w85lKeSLSztepJvxGR-KYU_pNpnHLRpJFZQptk/edit#gid=0"
@@ -61,6 +61,7 @@ function mainFun() {
   // Initialize counts
   var countGood = 0;
   var countBad = 0;
+  var countRpt = 0;
   
   var sheetHeaderOffset = 4; //num rows making up sheet header
   
@@ -73,24 +74,17 @@ function mainFun() {
   var employerData_BADSHT = badSheet.getRange(sheetHeaderOffset+1, 2, badSheet.getLastRow(), 2).getValues();
   var locData_BADSHT = badSheet.getRange(sheetHeaderOffset+1, 3, badSheet.getLastRow(), 3).getValues();
   
-  // Loop through positions data (array containing arrays of Position Objects from each email thread) and write the contents of each Position object to the spreadsheet
-  var length_positionsData = positionsData.length;
-  for ( var k = 0; k < length_positionsData; k++) {
-    for ( var z = 0; z < positionsData[k].length; z++) {
-      
-      // Check the flag on the position, if it passed the filter, pass it on to the data sheet. If it didnt pass filter send it to the rejects
-      if ( positionsData[k][z].badFlag == false && isPosUnique(positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, titlesData_GOODSHT, employerData_GOODSHT, locData_GOODSHT) ) { 
-        goodSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].dateAccessed, positionsData[k][z].datePosted, positionsData[k][z].source, positionsData[k][z].url])
-        countGood++;
-      }
-      else if ( positionsData[k][z].badFlag == true && isPosUnique(positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, titlesData_BADSHT, employerData_BADSHT, locData_BADSHT) ) {
-        badSheet.appendRow([positionsData[k][z].title, positionsData[k][z].employer, positionsData[k][z].loc, positionsData[k][z].dateAccessed, positionsData[k][z].datePosted, positionsData[k][z].source, positionsData[k][z].url])
-        countBad++;
-      }
-    
-    }
-  }
+  // run function to write data from each position to the appropriate spreadsheet 
+  // TODO: figure out how to implement something like pointers in C to handle changing the counts variables instead of returning variables and making extra variables. Just have counts good and bad, update based on address
+  var counts_Google = write2Sheet(positions_Google, goodSheet, badSheet, countGood, countBad, countRpt, titlesData_GOODSHT, employerData_GOODSHT, locData_GOODSHT, titlesData_BADSHT, employerData_BADSHT, locData_BADSHT);
+  var counts_Indeed = write2Sheet(positions_Indeed, goodSheet, badSheet, countGood, countBad, countRpt, titlesData_GOODSHT, employerData_GOODSHT, locData_GOODSHT, titlesData_BADSHT, employerData_BADSHT, locData_BADSHT);
+  var counts_LinkedIn = write2Sheet(positions_LinkedIn, goodSheet, badSheet, countGood, countBad, countRpt, titlesData_GOODSHT, employerData_GOODSHT, locData_GOODSHT, titlesData_BADSHT, employerData_BADSHT, locData_BADSHT);
 
+  // Collect counts 
+  var countGoodAll = counts_Google[0] + counts_Indeed[0] + counts_LinkedIn[0];
+  var countBadAll = counts_Google[1] + counts_Indeed[1] + counts_LinkedIn[1];
+  var countRptAll = counts_Google[2] + counts_Indeed[2] + counts_LinkedIn[2];
+  
   // Measure execution time in ms
   var todayThen = new Date();
   var t1 = todayThen.getTime();
@@ -98,8 +92,9 @@ function mainFun() {
   
   // Now send an email to the user's inbox with a report of what was found today 
   mailBody = "TODAY'S REPORT \r\r" +
-    "Found " + countGood + " Matching Positions \r\r" +
-    "Found " + countBad + " Rejected Positions \r\r" +
+    "Found " + countGoodAll + " Matching Positions \r\r" +
+    "Found " + countBadAll + " Rejected Positions \r\r" +
+    countRptAll + " Repeated Positions \r\r" +
     "See Results Here: " + spreadsheetURL + "\r\r" +
     "Execution Time: " + executionTime + "s"; 
   GmailApp.sendEmail(userEmail, "Daily Job Search Report From BotMan", mailBody); 
