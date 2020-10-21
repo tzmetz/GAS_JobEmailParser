@@ -12,7 +12,7 @@ This project reads the user's Gmail messages under a specified label and extract
 ## Setup 
 All this project requires to run is Google Apps Scripts which will run in the browser.  
 
-## Exmample Usage 
+## Example Usage 
 * User subscribes to Google Job alerts which are filtered by Gmail under a label called "job alerts"
 * This project runs once a day at 5pm where it reads and parses all messages under the label "job alerts" 
 * The extracted information from each message is writen to a Google Sheet set up by the user 
