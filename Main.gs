@@ -16,7 +16,7 @@
 
 
 // ---------------------- GLOBAL VARIABLES --------------------------
-const userEmail = "tzmetz777@gmail.com"
+const userEmail = <INSERT_GMAIL_ADDRESS_HERE>
 
 /*
   * main function executes program
@@ -43,7 +43,7 @@ function mainFun() {
   }
   
   // Now Write Parsed Job Info To a Spreadsheet 
-  var spreadsheetURL = "https://docs.google.com/spreadsheets/d/1UWBO4w85lKeSLSztepJvxGR-KYU_pNpnHLRpJFZQptk/edit#gid=0"
+  var spreadsheetURL = <INSERT_SPREADSHEET_URL_HERE>
   
   var goodSheet = SpreadsheetApp 
   .openByUrl(spreadsheetURL)
