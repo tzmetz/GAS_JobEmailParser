@@ -1,7 +1,7 @@
 # GAS_JobEmailParser 
 
 ## General Info 
-This project reads the user's Gmail messages under a specified label and extracts information about job openings from alerts made by Google Jobs such as title, employer, location. This information is then filtered and writen to a Google Sheet. See this blog post for a more detailed description of the general workings of this project. 
+This project reads the user's Gmail messages under a specified label and extracts information about job openings from alerts made by Google Jobs such as title, employer, location. This information is then filtered and writen to a Google Sheet. See this blog post for a more detailed description of the general workings of this project. https://trevormetz.myportfolio.com/job-search-automation-with-google-apps-scripts
 
 ## Dependencies 
 * Google Apps Scripts 
