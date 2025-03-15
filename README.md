@@ -10,7 +10,14 @@ This project reads the user's Gmail messages under a specified label and extract
 * Google Account  
 
 ## Setup 
-All this project requires to run is Google Apps Scripts which will run in the browser.  
+All this project requires to run is Google Apps Scripts which will run in the browser. 
+
+## How to Run the Code 
+1. (Write how to get github repo into GAS)
+2. Go to script.google.com to access Goolge App Scripts (GAS)
+3. Select the JobEmailParser Project
+4. Run the triggerStart.gs script to start triggering the code to run every weekday. You will need to authorize the script to access your google account's email and drive data
+5. To stop the automatic code execution, run triggerEnd.gs
 
 ## Example Usage 
 * User subscribes to Google Job alerts which are filtered by Gmail under a label called "job alerts"
